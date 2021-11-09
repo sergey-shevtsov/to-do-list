@@ -5,4 +5,11 @@
     <string name="header_hint">Заголовок</string>
     <string name="body_hint">Текст заметки</string>
     <string name="add_note_fab_desc">Add note button</string>
+    <string name="priority">Priority</string>
+    <string name="priority_high">high</string>
+    <string name="priority_medium">medium</string>
+    <string name="priority_low">low</string>
+    <string name="timestamp_draw_pattern">dd.MM.yy HH:mm</string>
+    <string name="note_item_priority_title">Priority</string>
+    <string name="note_item_priority_draw_pattern">%s: %s</string>
 </resources>

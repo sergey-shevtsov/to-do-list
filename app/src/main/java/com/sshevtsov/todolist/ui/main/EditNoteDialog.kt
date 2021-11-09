@@ -67,6 +67,7 @@ class EditNoteDialog() : DialogFragment() {
         noteItem?.let { note ->
             binding.titleEditText.text = SpannableStringBuilder(note.title)
             binding.bodyEditText.text = SpannableStringBuilder(note.body)
+            binding.prioritySlider.value = note.priority
         } ?: throw Exception("Missed bundle data with NOTE_EXTRA key")
     }
 
@@ -74,6 +75,7 @@ class EditNoteDialog() : DialogFragment() {
         noteItem?.let {
             it.title = binding.titleEditText.text.toString()
             it.body = binding.bodyEditText.text.toString()
+            it.priority = binding.prioritySlider.value
         } ?: throw Exception("Missed bundle data with NOTE_EXTRA key")
     }
 

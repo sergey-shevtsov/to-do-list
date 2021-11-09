@@ -34,12 +34,13 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
         initNoteList()
 
         binding.fabAdd.setOnClickListener {
-            openEditDialogFragment(NoteItem(Calendar.getInstance().timeInMillis))
+            openEditDialogFragment(NoteItem())
         }
     }
 
     private fun initNoteList() {
         adapter = NoteListAdapter(
+            context = requireContext(),
             data = data,
             onNoteItemClickListener = object : NoteListAdapter.OnNoteItemClickListener {
                 override fun onEditButtonClicked(data: Data, position: Int) {

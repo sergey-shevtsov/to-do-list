@@ -1,5 +1,6 @@
 package com.sshevtsov.todolist.ui.main
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NoteListAdapter(
+    private val context: Context,
     private val onNoteItemClickListener: OnNoteItemClickListener,
     private val data: MutableList<Data>
 ) : RecyclerView.Adapter<BaseViewHolder>(), ItemTouchHelperAdapter {
@@ -67,9 +69,20 @@ class NoteListAdapter(
             val binding = ListItemNoteBinding.bind(itemView)
             binding.apply {
                 textViewTimestamp.text =
-                    data.noteItem?.timestamp?.convertToPattern("dd.MM.yy HH:mm")
+                    data.noteItem?.timestamp?.convertToPattern(context.getString(R.string.timestamp_draw_pattern))
                 textViewHeader.text = data.noteItem?.title
                 textViewBody.text = data.noteItem?.body
+                val priority = when (data.noteItem?.priority) {
+                    2f -> context.getString(R.string.priority_high)
+                    1f -> context.getString(R.string.priority_medium)
+                    else -> context.getString(R.string.priority_low)
+                }
+                textViewPriority.text = String.format(
+                    Locale.getDefault(),
+                    context.getString(R.string.note_item_priority_draw_pattern),
+                    context.getString(R.string.note_item_priority_title),
+                    priority
+                )
 
                 editImageButton.setOnClickListener {
                     onNoteItemClickListener.onEditButtonClicked(data, layoutPosition)
