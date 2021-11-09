@@ -1,10 +1,13 @@
 package com.sshevtsov.todolist.ui.main
 
+import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import com.sshevtsov.todolist.R
 import com.sshevtsov.todolist.databinding.DialogEditNoteBinding
@@ -43,6 +46,7 @@ class EditNoteDialog() : DialogFragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -56,6 +60,10 @@ class EditNoteDialog() : DialogFragment() {
                 1f -> requireContext().getString(R.string.priority_medium)
                 else -> requireContext().getString(R.string.priority_low)
             }
+        }
+
+        binding.prioritySlider.addOnChangeListener { _, value, _ ->
+            paintPrioritySlider(value)
         }
 
         binding.positiveButton.setOnClickListener {
@@ -72,12 +80,46 @@ class EditNoteDialog() : DialogFragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun fillInputFields() {
         noteItem?.let { note ->
             binding.titleEditText.text = SpannableStringBuilder(note.title)
             binding.bodyEditText.text = SpannableStringBuilder(note.body)
             binding.prioritySlider.value = note.priority
+            paintPrioritySlider(note.priority)
         } ?: throw Exception("Missed bundle data with NOTE_EXTRA key")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun paintPrioritySlider(value: Float) {
+        binding.prioritySlider.apply {
+            when (value) {
+                2f -> {
+                    trackActiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_high_priority))
+                    trackInactiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_high_priority_24per))
+                    thumbTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_high_priority))
+                    haloTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_high_priority_24per))
+                    tickActiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_high_priority_54per))
+                    tickInactiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_high_priority_54per))
+                }
+                1f -> {
+                    trackActiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_medium_priority))
+                    trackInactiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_medium_priority_24per))
+                    thumbTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_medium_priority))
+                    haloTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_medium_priority_24per))
+                    tickActiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_medium_priority_54per))
+                    tickInactiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_medium_priority_54per))
+                }
+                else -> {
+                    trackActiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_low_priority))
+                    trackInactiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_low_priority_24per))
+                    thumbTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_low_priority))
+                    haloTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_low_priority_24per))
+                    tickActiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_low_priority_54per))
+                    tickInactiveTintList = ColorStateList.valueOf(requireContext().getColor(R.color.color_low_priority_54per))
+                }
+            }
+        }
     }
 
     private fun updateNoteItem() {

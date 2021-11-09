@@ -1,9 +1,11 @@
 package com.sshevtsov.todolist.ui.main
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sshevtsov.todolist.R
 import com.sshevtsov.todolist.databinding.ListItemHeaderBinding
@@ -65,6 +67,7 @@ class NoteListAdapter(
 
     inner class NoteItemViewHolder(itemView: View) : BaseViewHolder(itemView),
         ItemTouchHelperViewHolder {
+        @RequiresApi(Build.VERSION_CODES.M)
         override fun bind(data: Data) {
             val binding = ListItemNoteBinding.bind(itemView)
             binding.apply {
@@ -82,6 +85,15 @@ class NoteListAdapter(
                     context.getString(R.string.note_item_priority_draw_pattern),
                     context.getString(R.string.note_item_priority_title),
                     priority
+                )
+                textViewPriority.setTextColor(
+                    context.getColor(
+                        when (data.noteItem?.priority) {
+                            2f -> R.color.color_high_priority_54per
+                            1f -> R.color.color_medium_priority_54per
+                            else -> R.color.color_low_priority_54per
+                        }
+                    )
                 )
 
                 editImageButton.setOnClickListener {

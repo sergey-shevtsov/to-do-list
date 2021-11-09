@@ -8,4 +8,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
+
+    <color name="color_low_priority">#43FA00</color>
+    <color name="color_low_priority_54per">#8A43FA00</color>
+    <color name="color_low_priority_24per">#3D43FA00</color>
+    <color name="color_medium_priority">#FFE600</color>
+    <color name="color_medium_priority_54per">#8AFFE600</color>
+    <color name="color_medium_priority_24per">#3DFFE600</color>
+    <color name="color_high_priority">#FF0000</color>
+    <color name="color_high_priority_54per">#8AFF0000</color>
+    <color name="color_high_priority_24per">#3DFF0000</color>
 </resources>
