@@ -62,19 +62,20 @@ class NoteListAdapter(
                 textViewBody.text = data.noteItem?.body
 
                 editImageButton.setOnClickListener {
-                    onNoteItemClickListener.onEditButtonClicked(data)
+                    onNoteItemClickListener.onEditButtonClicked(data, layoutPosition)
                 }
-                deleteImageButton.setOnClickListener {
-                    onNoteItemClickListener.onDeleteButtonClicked(data)
-                }
+                deleteImageButton.setOnClickListener { removeItem() }
             }
         }
 
+        private fun removeItem() {
+            data.removeAt(layoutPosition)
+            notifyItemRemoved(layoutPosition)
+        }
     }
 
     interface OnNoteItemClickListener {
-        fun onEditButtonClicked(data: Data)
-        fun onDeleteButtonClicked(data: Data)
+        fun onEditButtonClicked(data: Data, position: Int)
     }
 }
 

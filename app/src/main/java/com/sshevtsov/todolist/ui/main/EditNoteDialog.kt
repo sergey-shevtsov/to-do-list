@@ -1,6 +1,7 @@
 package com.sshevtsov.todolist.ui.main
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ class EditNoteDialog() : DialogFragment() {
 
     companion object {
         const val NOTE_EXTRA = "NOTE"
+        const val POSITION_EXTRA = "POSITION"
         fun newInstance(bundle: Bundle): EditNoteDialog {
             return EditNoteDialog().also {
                 it.arguments = bundle
@@ -43,10 +45,15 @@ class EditNoteDialog() : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val position = arguments?.getInt(POSITION_EXTRA, -1)
+
+        if (position != -1) fillInputFields()
+
         binding.positiveButton.setOnClickListener {
             updateNoteItem()
 
-            callbackOwner?.onPositiveClicked(noteItem!!) ?: throw Exception("Missed callback owner")
+            callbackOwner?.onPositiveClicked(noteItem!!, position!!)
+                ?: throw Exception("Missed callback owner")
 
             dismiss()
         }
@@ -54,6 +61,13 @@ class EditNoteDialog() : DialogFragment() {
         binding.negativeButton.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun fillInputFields() {
+        noteItem?.let { note ->
+            binding.titleEditText.text = SpannableStringBuilder(note.title)
+            binding.bodyEditText.text = SpannableStringBuilder(note.body)
+        } ?: throw Exception("Missed bundle data with NOTE_EXTRA key")
     }
 
     private fun updateNoteItem() {
@@ -64,7 +78,7 @@ class EditNoteDialog() : DialogFragment() {
     }
 
     interface DialogCallback {
-        fun onPositiveClicked(noteItem: NoteItem)
+        fun onPositiveClicked(noteItem: NoteItem, position: Int)
     }
 
 }
