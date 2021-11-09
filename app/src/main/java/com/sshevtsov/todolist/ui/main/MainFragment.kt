@@ -10,10 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sshevtsov.todolist.databinding.FragmentMainBinding
 import java.util.*
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
+    private val data = mutableListOf(Data(Data.TYPE_HEADER, "Notes"))
+
+    private lateinit var adapter: NoteListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,85 +31,8 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = NoteListAdapter(
-            data = mutableListOf(
-                Data(
-                    viewType = Data.TYPE_HEADER,
-                    headerText = "Notes"
-                ),
-                Data(
-                    viewType = Data.TYPE_NOTE,
-                    noteItem = NoteItem(
-                        Calendar.getInstance().timeInMillis,
-                        "Заголовок 1",
-                        "Текст заметки 1"
-                    )
-                ),
-                Data(
-                    viewType = Data.TYPE_NOTE,
-                    noteItem = NoteItem(
-                        Calendar.getInstance().timeInMillis,
-                        "Заголовок 2",
-                        "Текст заметки 2"
-                    )
-                ),
-                Data(
-                    viewType = Data.TYPE_NOTE,
-                    noteItem = NoteItem(
-                        Calendar.getInstance().timeInMillis,
-                        "Заголовок 3",
-                        "Текст заметки 3"
-                    )
-                ),
-                Data(
-                    viewType = Data.TYPE_NOTE,
-                    noteItem = NoteItem(
-                        Calendar.getInstance().timeInMillis,
-                        "Заголовок 4",
-                        "Текст заметки 4"
-                    )
-                ),
-                Data(
-                    viewType = Data.TYPE_NOTE,
-                    noteItem = NoteItem(
-                        Calendar.getInstance().timeInMillis,
-                        "Заголовок 5",
-                        "Текст заметки 5"
-                    )
-                ),
-                Data(
-                    viewType = Data.TYPE_NOTE,
-                    noteItem = NoteItem(
-                        Calendar.getInstance().timeInMillis,
-                        "Заголовок 6",
-                        "Текст заметки 6"
-                    )
-                ),
-                Data(
-                    viewType = Data.TYPE_NOTE,
-                    noteItem = NoteItem(
-                        Calendar.getInstance().timeInMillis,
-                        "Заголовок 7",
-                        "Текст заметки 7"
-                    )
-                ),
-                Data(
-                    viewType = Data.TYPE_NOTE,
-                    noteItem = NoteItem(
-                        Calendar.getInstance().timeInMillis,
-                        "Заголовок 8",
-                        "Текст заметки 8"
-                    )
-                ),
-                Data(
-                    viewType = Data.TYPE_NOTE,
-                    noteItem = NoteItem(
-                        Calendar.getInstance().timeInMillis,
-                        "Заголовок 9",
-                        "Текст заметки 9"
-                    )
-                )
-            ),
+        adapter = NoteListAdapter(
+            data = data,
             onNoteItemClickListener = object : NoteListAdapter.OnNoteItemClickListener {
                 override fun onEditButtonClicked(data: Data) {
                     Toast.makeText(context, "Edit ${data.noteItem?.title}", Toast.LENGTH_SHORT)
@@ -123,6 +50,22 @@ class MainFragment : Fragment() {
         binding.recyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.recyclerView.adapter = adapter
+
+        binding.fabAdd.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putParcelable(
+                EditNoteDialog.NOTE_EXTRA,
+                NoteItem(Calendar.getInstance().timeInMillis)
+            )
+            val editNoteDialog = EditNoteDialog.newInstance(bundle)
+            editNoteDialog.setCallbackOwner(this)
+            editNoteDialog.show(parentFragmentManager, null)
+        }
+    }
+
+    override fun onPositiveClicked(noteItem: NoteItem) {
+        data.add(Data(viewType = Data.TYPE_NOTE, noteItem = noteItem))
+        adapter.notifyItemInserted(data.size - 1)
     }
 
 }
