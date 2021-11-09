@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">To do list</string>
+    <string name="button_save">Save</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="header_hint">Заголовок</string>
+    <string name="body_hint">Текст заметки</string>
+    <string name="add_note_fab_desc">Add note button</string>
 </resources>
