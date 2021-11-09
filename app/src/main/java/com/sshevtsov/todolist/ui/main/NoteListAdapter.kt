@@ -13,7 +13,7 @@ import java.util.*
 class NoteListAdapter(
     private val onNoteItemClickListener: OnNoteItemClickListener,
     private val data: MutableList<Data>
-) : RecyclerView.Adapter<BaseViewHolder>() {
+) : RecyclerView.Adapter<BaseViewHolder>(), ItemTouchHelperAdapter {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -43,6 +43,15 @@ class NoteListAdapter(
 
     override fun getItemViewType(position: Int): Int = data[position].viewType
 
+    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        if (toPosition != 0) {
+            data.removeAt(fromPosition).apply {
+                data.add(toPosition, this)
+            }
+            notifyItemMoved(fromPosition, toPosition)
+        }
+    }
+
     inner class HeaderViewHolder(itemView: View) : BaseViewHolder(itemView) {
 
         override fun bind(data: Data) {
@@ -52,7 +61,8 @@ class NoteListAdapter(
 
     }
 
-    inner class NoteItemViewHolder(itemView: View) : BaseViewHolder(itemView) {
+    inner class NoteItemViewHolder(itemView: View) : BaseViewHolder(itemView),
+        ItemTouchHelperViewHolder {
         override fun bind(data: Data) {
             val binding = ListItemNoteBinding.bind(itemView)
             binding.apply {
@@ -71,6 +81,20 @@ class NoteListAdapter(
         private fun removeItem() {
             data.removeAt(layoutPosition)
             notifyItemRemoved(layoutPosition)
+        }
+
+        override fun onItemSelected() {
+            itemView.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .duration = 200
+        }
+
+        override fun onItemClear() {
+            itemView.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .duration = 200
         }
     }
 
