@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.sshevtsov.todolist.R
 import com.sshevtsov.todolist.databinding.DialogEditNoteBinding
 
 class EditNoteDialog() : DialogFragment() {
@@ -47,7 +48,15 @@ class EditNoteDialog() : DialogFragment() {
 
         val position = arguments?.getInt(POSITION_EXTRA, -1)
 
-        if (position != -1) fillInputFields()
+        fillInputFields()
+
+        binding.prioritySlider.setLabelFormatter { value ->
+            when (value) {
+                2f -> requireContext().getString(R.string.priority_high)
+                1f -> requireContext().getString(R.string.priority_medium)
+                else -> requireContext().getString(R.string.priority_low)
+            }
+        }
 
         binding.positiveButton.setOnClickListener {
             updateNoteItem()
