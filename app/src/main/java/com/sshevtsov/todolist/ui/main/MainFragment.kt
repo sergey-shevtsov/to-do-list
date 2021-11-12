@@ -31,11 +31,16 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        generateDataList(15)
         initNoteList()
 
         binding.fabAdd.setOnClickListener {
             openEditDialogFragment(NoteItem())
         }
+    }
+
+    private fun generateDataList(size: Int) {
+        data.addAll(NotesExample.getNoteList(size))
     }
 
     private fun initNoteList() {
