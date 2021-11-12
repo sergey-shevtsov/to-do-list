@@ -56,6 +56,12 @@ class NoteListAdapter(
         }
     }
 
+    fun setData(newData: List<Data>) {
+        data.clear()
+        data.addAll(newData)
+        notifyDataSetChanged()
+    }
+
     inner class HeaderViewHolder(itemView: View) : BaseViewHolder(itemView) {
 
         override fun bind(data: Data) {

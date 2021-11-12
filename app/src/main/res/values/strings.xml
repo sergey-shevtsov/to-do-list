@@ -14,4 +14,7 @@
     <string name="note_item_priority_draw_pattern">%s: %s</string>
     <string name="top_bar_sort">Sort by</string>
     <string name="top_bar_filter">Filter</string>
+    <string name="sort_by">Sort by:</string>
+    <string name="chip_date">Date</string>
+    <string name="chip_priority">Priority</string>
 </resources>
