@@ -1,12 +1,11 @@
 package com.sshevtsov.todolist.ui.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sshevtsov.todolist.R
 import com.sshevtsov.todolist.databinding.FragmentMainBinding
 import java.util.*
 
