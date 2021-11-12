@@ -4,9 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.motion.widget.MotionLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/fragment_main_scene">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
@@ -26,46 +27,50 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
-            android:id="@+id/sort_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="@string/sort_by"
-            app:layout_constraintBottom_toBottomOf="@id/top_barrier"
-            app:layout_constraintEnd_toStartOf="@id/sort_chip_group"
-            app:layout_constraintTop_toBottomOf="@id/app_bar_layout" />
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/sort_chip_group"
+        <LinearLayout
+            android:id="@+id/sort_linear_layout"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
-            app:singleLine="true">
+            android:layout_height="0dp"
+            android:gravity="center_vertical|end"
+            android:orientation="horizontal">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_sort_by_date"
-                style="@style/Widget.MaterialComponents.Chip.Action"
+            <TextView
+                android:id="@+id/sort_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/chip_date" />
+                android:layout_marginEnd="8dp"
+                android:text="@string/sort_by" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_sort_by_priority"
-                style="@style/Widget.MaterialComponents.Chip.Action"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/sort_chip_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/chip_priority" />
+                app:singleLine="true">
 
-        </com.google.android.material.chip.ChipGroup>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sort_by_date"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_date" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_sort_by_priority"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/chip_priority" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/top_barrier"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="sort_chip_group" />
+            app:constraint_referenced_ids="app_bar_layout,sort_linear_layout" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
@@ -76,7 +81,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/top_barrier" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
