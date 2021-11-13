@@ -30,6 +30,13 @@ class NoteListAdapter(
                     false
                 )
             )
+            Data.TYPE_NOTE_SPANNABLE -> NoteItemSpannableViewHolder(
+                inflater.inflate(
+                    R.layout.list_item_note,
+                    parent,
+                    false
+                )
+            )
             else -> HeaderViewHolder(
                 inflater.inflate(
                     R.layout.list_item_header,
@@ -84,6 +91,64 @@ class NoteListAdapter(
                 textViewHeader.text = data.noteItem?.title
                 textViewBody.text = data.noteItem?.body
                 val priority = when (data.noteItem?.priority) {
+                    2f -> context.getString(R.string.priority_high)
+                    1f -> context.getString(R.string.priority_medium)
+                    else -> context.getString(R.string.priority_low)
+                }
+                textViewPriority.text = String.format(
+                    Locale.getDefault(),
+                    context.getString(R.string.note_item_priority_draw_pattern),
+                    context.getString(R.string.note_item_priority_title),
+                    priority
+                )
+                textViewPriority.setTextColor(
+                    context.getColor(
+                        when (data.noteItem?.priority) {
+                            2f -> R.color.color_high_priority_54per
+                            1f -> R.color.color_medium_priority_54per
+                            else -> R.color.color_low_priority_54per
+                        }
+                    )
+                )
+
+                editImageButton.setOnClickListener {
+                    onNoteItemClickListener.onEditButtonClicked(data, layoutPosition)
+                }
+                deleteImageButton.setOnClickListener { removeItem() }
+            }
+        }
+
+        private fun removeItem() {
+            data.removeAt(layoutPosition)
+            notifyItemRemoved(layoutPosition)
+        }
+
+        override fun onItemSelected() {
+            itemView.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .duration = 200
+        }
+
+        override fun onItemClear() {
+            itemView.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .duration = 200
+        }
+    }
+
+    inner class NoteItemSpannableViewHolder(itemView: View) : BaseViewHolder(itemView),
+        ItemTouchHelperViewHolder {
+        @RequiresApi(Build.VERSION_CODES.M)
+        override fun bind(data: Data) {
+            val binding = ListItemNoteBinding.bind(itemView)
+            binding.apply {
+                textViewTimestamp.text =
+                    data.noteItemSpannable?.timestamp?.convertToPattern(context.getString(R.string.timestamp_draw_pattern))
+                textViewHeader.text = data.noteItemSpannable?.title
+                textViewBody.text = data.noteItemSpannable?.body
+                val priority = when (data.noteItemSpannable?.priority) {
                     2f -> context.getString(R.string.priority_high)
                     1f -> context.getString(R.string.priority_medium)
                     else -> context.getString(R.string.priority_low)

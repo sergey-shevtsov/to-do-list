@@ -15,8 +15,13 @@ class DiffUtilCallback(
             return oldItemPosition == newItemPosition
         }
 
-        return oldItems[oldItemPosition].noteItem!!.timestamp ==
-                newItems[newItemPosition].noteItem!!.timestamp
+        return if (oldItems[oldItemPosition].viewType == Data.TYPE_NOTE) {
+            oldItems[oldItemPosition].noteItem!!.timestamp ==
+                    newItems[newItemPosition].noteItem!!.timestamp
+        } else {
+            oldItems[oldItemPosition].noteItemSpannable!!.timestamp ==
+                    newItems[newItemPosition].noteItemSpannable!!.timestamp
+        }
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -24,9 +29,18 @@ class DiffUtilCallback(
 
         val oldItem = oldItems[oldItemPosition].noteItem!!
         val newItem = newItems[newItemPosition].noteItem!!
+        val oldItemSpannable = oldItems[oldItemPosition].noteItemSpannable!!
+        val newItemSpannable = newItems[newItemPosition].noteItemSpannable!!
 
-        return oldItem.title == newItem.title &&
-                oldItem.body == newItem.body &&
-                oldItem.priority == newItem.priority
+        return if (oldItems[oldItemPosition].viewType == Data.TYPE_NOTE) {
+            oldItem.title == newItem.title &&
+                    oldItem.body == newItem.body &&
+                    oldItem.priority == newItem.priority
+        } else {
+            !newItemSpannable.hasChanges &&
+                    oldItemSpannable.title == newItemSpannable.title &&
+                    oldItemSpannable.body == newItemSpannable.body &&
+                    oldItemSpannable.priority == newItemSpannable.priority
+        }
     }
 }
