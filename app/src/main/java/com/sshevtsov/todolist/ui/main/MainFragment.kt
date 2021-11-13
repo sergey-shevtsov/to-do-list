@@ -1,8 +1,15 @@
 package com.sshevtsov.todolist.ui.main
 
+import android.app.SearchManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,12 +36,41 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
 
     private lateinit var adapter: NoteListAdapter
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_top_bar, menu)
+        val searchManager =
+            requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchView = menu.findItem(R.id.search).actionView as SearchView
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
+        searchView.queryHint = getString(R.string.search_hint)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.v("onQueryTextSubmit", "Query: $query")
+                return true
+            }
+
+            @RequiresApi(Build.VERSION_CODES.N)
+            override fun onQueryTextChange(newText: String?): Boolean {
+                Log.v("onQueryTextChange", "NewText: $newText")
+                filterDataByText(newText)
+                return true
+            }
+
+        })
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
+
+        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.topActionBar)
+        setHasOptionsMenu(true)
+
         return binding.root
     }
 
@@ -54,6 +90,30 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
         }
 
 
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun filterDataByText(text: String?) {
+        text?.let {
+
+            val filteredData = mutableListOf<Data>()
+
+            data.forEach { item ->
+                if (item.viewType == Data.TYPE_HEADER) {
+                    filteredData.add(item)
+                    return@forEach
+                }
+                val note = item.noteItem!!
+                if (note.title.contains(text, true) || note.body.contains(text, true)) {
+                    filteredData.add(item)
+                    return@forEach
+                }
+            }
+
+
+            adapter.setData(filteredData)
+
+        }
     }
 
     private fun sortData() {
@@ -153,7 +213,7 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
     private fun initNoteList() {
         adapter = NoteListAdapter(
             context = requireContext(),
-            data = data,
+            data = data.toMutableList(),
             onNoteItemClickListener = object : NoteListAdapter.OnNoteItemClickListener {
                 override fun onEditButtonClicked(data: Data, position: Int) {
                     data.noteItem?.let { note ->

@@ -18,4 +18,5 @@
     <string name="chip_date">Date</string>
     <string name="chip_priority">Priority</string>
     <string name="top_bar_search">Search</string>
+    <string name="search_hint">Search here</string>
 </resources>
