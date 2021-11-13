@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sshevtsov.todolist.R
 import com.sshevtsov.todolist.databinding.ListItemHeaderBinding
@@ -57,9 +58,10 @@ class NoteListAdapter(
     }
 
     fun setData(newData: List<Data>) {
+        val result = DiffUtil.calculateDiff(DiffUtilCallback(data, newData))
+        result.dispatchUpdatesTo(this)
         data.clear()
         data.addAll(newData)
-        notifyDataSetChanged()
     }
 
     inner class HeaderViewHolder(itemView: View) : BaseViewHolder(itemView) {
