@@ -136,7 +136,7 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
                 for (i in 1 until data.size) {
                     data[i].noteItem!!.hasChanges = true
                 }
-                adapter.setData(data)
+                adapter.setData(data.toMutableList())
             }
         }
     }
@@ -261,7 +261,7 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
     private fun initNoteList() {
         adapter = NoteListAdapter(
             context = requireContext(),
-            data = data,
+            data = data.toMutableList(),
             onNoteItemClickListener = object : NoteListAdapter.OnNoteItemClickListener {
                 override fun onEditButtonClicked(data: Data, position: Int) {
                     data.noteItem?.let { note ->
@@ -310,7 +310,7 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
             val newData = Data(viewType = Data.TYPE_NOTE, noteItem = noteItem)
             data.add(newData)
             sortData()
-            adapter.setData(data)
+            adapter.setData(data.toMutableList())
         } else {
             data[position].noteItem?.title = noteItem.title
             data[position].noteItem?.body = noteItem.body
