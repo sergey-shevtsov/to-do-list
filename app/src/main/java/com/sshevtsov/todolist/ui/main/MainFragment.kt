@@ -2,11 +2,13 @@ package com.sshevtsov.todolist.ui.main
 
 import android.app.SearchManager
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.style.BackgroundColorSpan
 import android.view.*
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -19,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sshevtsov.todolist.R
 import com.sshevtsov.todolist.databinding.FragmentMainBinding
 import com.sshevtsov.todolist.utils.getMatchIndices
+import org.w3c.dom.Text
 import java.util.*
 
 class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
@@ -47,6 +50,11 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
             requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val searchView = menu.findItem(R.id.search).actionView as SearchView
         searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
+
+        val searchTextView = searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+        searchTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        searchTextView.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.search_hint_color))
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
