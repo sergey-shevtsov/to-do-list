@@ -1,5 +1,6 @@
 package com.sshevtsov.todolist.ui.main
 
+import androidx.core.text.toSpannable
 import java.util.*
 import kotlin.random.Random
 
@@ -32,8 +33,8 @@ object NotesExample {
             viewType = Data.TYPE_NOTE,
             noteItem = NoteItem(
                 timestamp = Random.nextLong(calendarFrom.timeInMillis, calendarUntil.timeInMillis),
-                title = "Title ${dataSize + 1}",
-                body = "Some very important note number ${dataSize + 1} text",
+                title = "Title ${dataSize + 1}".toSpannable(),
+                body = "Some very important note number ${dataSize + 1} text".toSpannable(),
                 priority = Random.nextInt(0, 3).toFloat()
             )
         )

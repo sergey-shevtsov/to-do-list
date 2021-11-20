@@ -4,17 +4,21 @@ import android.app.SearchManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.text.Spannable
+import android.text.style.BackgroundColorSpan
 import android.view.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.core.text.clearSpans
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sshevtsov.todolist.R
 import com.sshevtsov.todolist.databinding.FragmentMainBinding
+import com.sshevtsov.todolist.utils.getMatchIndices
 import java.util.*
 
 class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
@@ -28,6 +32,7 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
     }
 
     private var currentSortMethod = Pair(DATE_DOWN, PRIORITY_NONE)
+    private var currentSearchQuery: String = ""
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -45,13 +50,12 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
         searchView.queryHint = getString(R.string.search_hint)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.v("onQueryTextSubmit", "Query: $query")
                 return true
             }
 
             @RequiresApi(Build.VERSION_CODES.N)
             override fun onQueryTextChange(newText: String?): Boolean {
-                Log.v("onQueryTextChange", "NewText: $newText")
+                newText?.let { currentSearchQuery = it }
                 filterDataByText(newText)
                 return true
             }
@@ -74,6 +78,7 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -103,17 +108,51 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
                     filteredData.add(item)
                     return@forEach
                 }
+
                 val note = item.noteItem!!
-                if (note.title.contains(text, true) || note.body.contains(text, true)) {
+
+                note.title.clearSpans()
+                note.body.clearSpans()
+
+                val titleMatchIndices = note.title.getMatchIndices(text)
+                val bodyMatchIndices = note.body.getMatchIndices(text)
+
+                if (titleMatchIndices.isNotEmpty() || bodyMatchIndices.isNotEmpty()) {
+                    note.title =
+                        getTextWithBackgroundSpans(note.title, text.length, titleMatchIndices)
+                    note.body =
+                        getTextWithBackgroundSpans(note.body, text.length, bodyMatchIndices)
+                    note.hasChanges = true
                     filteredData.add(item)
-                    return@forEach
                 }
             }
 
-
-            adapter.setData(filteredData)
-
+            if (filteredData.size > 1) {
+                adapter.setData(filteredData)
+                for (i in 1 until data.size) {
+                    data[i].noteItem!!.hasChanges = false
+                }
+            } else {
+                for (i in 1 until data.size) {
+                    data[i].noteItem!!.hasChanges = true
+                }
+                adapter.setData(data)
+            }
         }
+    }
+
+    private fun getTextWithBackgroundSpans(
+        text: Spannable,
+        spanSize: Int,
+        indices: List<Int>
+    ): Spannable {
+        for (index in indices) {
+            text.setSpan(
+                BackgroundColorSpan(ContextCompat.getColor(requireContext(), R.color.teal_200)),
+                index, index + spanSize, Spannable.SPAN_INCLUSIVE_EXCLUSIVE
+            )
+        }
+        return text
     }
 
     private fun sortData() {
@@ -149,6 +188,7 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
         data = sortedData
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun initSortChipGroupListeners() {
         binding.chipSortByDate.setOnClickListener {
             currentSortMethod = Pair(
@@ -158,7 +198,11 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
             )
             renderSortChipGroup()
             sortData()
-            adapter.setData(data)
+            if (currentSearchQuery.isEmpty()) {
+                adapter.setData(data)
+            } else {
+                filterDataByText(currentSearchQuery)
+            }
         }
 
         binding.chipSortByPriority.setOnClickListener {
@@ -173,7 +217,11 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
             )
             renderSortChipGroup()
             sortData()
-            adapter.setData(data)
+            if (currentSearchQuery.isEmpty()) {
+                adapter.setData(data)
+            } else {
+                filterDataByText(currentSearchQuery)
+            }
         }
     }
 

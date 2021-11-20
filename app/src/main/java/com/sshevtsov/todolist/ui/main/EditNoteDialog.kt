@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.text.toSpannable
 import androidx.fragment.app.DialogFragment
 import com.sshevtsov.todolist.R
 import com.sshevtsov.todolist.databinding.DialogEditNoteBinding
@@ -124,8 +125,8 @@ class EditNoteDialog() : DialogFragment() {
 
     private fun updateNoteItem() {
         noteItem?.let {
-            it.title = binding.titleEditText.text.toString()
-            it.body = binding.bodyEditText.text.toString()
+            it.title = binding.titleEditText.text.toString().toSpannable()
+            it.body = binding.bodyEditText.text.toString().toSpannable()
             it.priority = binding.prioritySlider.value
         } ?: throw Exception("Missed bundle data with NOTE_EXTRA key")
     }

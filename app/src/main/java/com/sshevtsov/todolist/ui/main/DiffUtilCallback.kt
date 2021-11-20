@@ -21,12 +21,6 @@ class DiffUtilCallback(
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         if (oldItemPosition == 0 && newItemPosition == 0) return true
-
-        val oldItem = oldItems[oldItemPosition].noteItem!!
-        val newItem = newItems[newItemPosition].noteItem!!
-
-        return oldItem.title == newItem.title &&
-                oldItem.body == newItem.body &&
-                oldItem.priority == newItem.priority
+        return !newItems[newItemPosition].noteItem!!.hasChanges
     }
 }
