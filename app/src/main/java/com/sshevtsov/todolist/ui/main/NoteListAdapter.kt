@@ -131,7 +131,7 @@ class NoteListAdapter(
         }
     }
 
-    interface OnNoteItemClickListener {
+    fun interface OnNoteItemClickListener {
         fun onEditButtonClicked(data: Data, position: Int)
     }
 }

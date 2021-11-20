@@ -32,11 +32,8 @@ class EditNoteDialog() : DialogFragment() {
         arguments?.getParcelable(NOTE_EXTRA)
     }
 
-    private var callbackOwner: DialogCallback? = null
-
-    fun setCallbackOwner(callbackOwner: DialogCallback) {
-        this.callbackOwner = callbackOwner
-    }
+    var onPositiveButtonClickListener: OnPositiveButtonClickListener? = null
+        set(value) {field = value}
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,8 +47,6 @@ class EditNoteDialog() : DialogFragment() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val position = arguments?.getInt(POSITION_EXTRA, -1)
 
         fillInputFields()
 
@@ -70,8 +65,7 @@ class EditNoteDialog() : DialogFragment() {
         binding.positiveButton.setOnClickListener {
             updateNoteItem()
 
-            callbackOwner?.onPositiveClicked(noteItem!!, position!!)
-                ?: throw Exception("Missed callback owner")
+            onPositiveButtonClickListener?.onPositiveButtonClicked(noteItem!!)
 
             dismiss()
         }
@@ -131,8 +125,8 @@ class EditNoteDialog() : DialogFragment() {
         } ?: throw Exception("Missed bundle data with NOTE_EXTRA key")
     }
 
-    interface DialogCallback {
-        fun onPositiveClicked(noteItem: NoteItem, position: Int)
+    fun interface OnPositiveButtonClickListener {
+        fun onPositiveButtonClicked(noteItem: NoteItem)
     }
 
 }

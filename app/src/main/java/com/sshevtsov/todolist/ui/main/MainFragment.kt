@@ -2,7 +2,6 @@ package com.sshevtsov.todolist.ui.main
 
 import android.app.SearchManager
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
@@ -21,10 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sshevtsov.todolist.R
 import com.sshevtsov.todolist.databinding.FragmentMainBinding
 import com.sshevtsov.todolist.utils.getMatchIndices
-import org.w3c.dom.Text
 import java.util.*
 
-class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
+class MainFragment : Fragment() {
 
     companion object {
         private const val DATE_DOWN = 0
@@ -51,9 +49,15 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
         val searchView = menu.findItem(R.id.search).actionView as SearchView
         searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
 
-        val searchTextView = searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
+        val searchTextView =
+            searchView.findViewById<TextView>(androidx.appcompat.R.id.search_src_text)
         searchTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-        searchTextView.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.search_hint_color))
+        searchTextView.setHintTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.search_hint_color
+            )
+        )
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -270,11 +274,9 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
         adapter = NoteListAdapter(
             context = requireContext(),
             data = data.toMutableList(),
-            onNoteItemClickListener = object : NoteListAdapter.OnNoteItemClickListener {
-                override fun onEditButtonClicked(data: Data, position: Int) {
-                    data.noteItem?.let { note ->
-                        openEditDialogFragment(note, position)
-                    }
+            onNoteItemClickListener = { data, position ->
+                data.noteItem?.let { note ->
+                    openEditDialogFragment(note, position)
                 }
             }
         )
@@ -294,7 +296,15 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
             noteItem
         )
         val editNoteDialog = EditNoteDialog.newInstance(bundle)
-        editNoteDialog.setCallbackOwner(this@MainFragment)
+
+        editNoteDialog.onPositiveButtonClickListener =
+            EditNoteDialog.OnPositiveButtonClickListener { note ->
+                val newData = Data(viewType = Data.TYPE_NOTE, noteItem = note)
+                data.add(newData)
+                sortData()
+                adapter.setData(data.toMutableList())
+            }
+
         editNoteDialog.show(parentFragmentManager, null)
     }
 
@@ -308,22 +318,17 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
             EditNoteDialog.POSITION_EXTRA,
             position
         )
-        val editNoteDialog = EditNoteDialog.newInstance(bundle)
-        editNoteDialog.setCallbackOwner(this@MainFragment)
-        editNoteDialog.show(parentFragmentManager, null)
-    }
+        val editNoteDialog = EditNoteDialog.newInstance(bundle).also {
+            it.onPositiveButtonClickListener =
+                EditNoteDialog.OnPositiveButtonClickListener { note ->
+                    data[position].noteItem?.title = note.title
+                    data[position].noteItem?.body = note.body
+                    data[position].noteItem?.priority = note.priority
+                    adapter.notifyItemChanged(position)
+                }
 
-    override fun onPositiveClicked(noteItem: NoteItem, position: Int) {
-        if (position == -1) {
-            val newData = Data(viewType = Data.TYPE_NOTE, noteItem = noteItem)
-            data.add(newData)
-            sortData()
-            adapter.setData(data.toMutableList())
-        } else {
-            data[position].noteItem?.title = noteItem.title
-            data[position].noteItem?.body = noteItem.body
-            adapter.notifyItemChanged(position)
         }
+        editNoteDialog.show(parentFragmentManager, null)
     }
 
 }
