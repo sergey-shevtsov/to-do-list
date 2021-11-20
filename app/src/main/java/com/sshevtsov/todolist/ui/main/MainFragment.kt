@@ -91,6 +91,7 @@ class MainFragment : Fragment(), EditNoteDialog.DialogCallback {
         initNoteList()
 
         binding.fabAdd.setOnClickListener {
+            binding.topActionBar.collapseActionView()
             openEditDialogFragment(NoteItem())
         }
 
