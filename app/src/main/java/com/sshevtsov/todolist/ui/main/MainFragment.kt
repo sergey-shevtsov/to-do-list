@@ -320,10 +320,7 @@ class MainFragment : Fragment() {
         )
         val editNoteDialog = EditNoteDialog.newInstance(bundle).also {
             it.onPositiveButtonClickListener =
-                EditNoteDialog.OnPositiveButtonClickListener { note ->
-                    data[position].noteItem?.title = note.title
-                    data[position].noteItem?.body = note.body
-                    data[position].noteItem?.priority = note.priority
+                EditNoteDialog.OnPositiveButtonClickListener {
                     adapter.notifyItemChanged(position)
                 }
 
