@@ -129,4 +129,9 @@ class EditNoteDialog() : DialogFragment() {
         fun onPositiveButtonClicked(noteItem: NoteItem)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

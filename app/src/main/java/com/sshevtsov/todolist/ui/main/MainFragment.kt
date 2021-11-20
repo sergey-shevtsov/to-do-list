@@ -328,4 +328,9 @@ class MainFragment : Fragment() {
         editNoteDialog.show(parentFragmentManager, null)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }
